@@ -2,7 +2,11 @@ const app=require('./app')
 
 const connect=require('./config/db')
 
-app.listen(5555,async()=>{
+require('dotenv').config()
+
+const port=process.env.Port || 5555;
+
+app.listen(port,async()=>{
     await connect()
-    console.log('listening port 5555')
+    console.log(`listening port ${port}`)
 })

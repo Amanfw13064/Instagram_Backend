@@ -9,7 +9,7 @@ const User=require('../Models/UserModel')
 router.patch('/:id',upload.single('profile_pic'),async(req,res)=>{
     try{
        const user_pic=await User.findByIdAndUpdate(req.params.id,{
-           profile_pic:req.file.path,
+           profile_pic:req.file.filename,
        },{new:true}).lean().exec()
 
        return res.status(200).send(user_pic)
