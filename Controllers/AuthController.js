@@ -10,15 +10,15 @@ const User=require('../Models/UserModel')
 
 const signup=async(req,res)=>{
     try{
-        let user=await User.findOne({username:req.body.username})
+        let user=await User.findOne({username:req.body.username}).lean().exec()
         if(user){
-            return res.status(400).send({message:"User with that username already exists"})
+            return res.status(500).send({message:"User with that username already exists"})
         }
         user=await User.create(req.body)
 
         const token=newToken(user)
 
-        return res.send({user,token})
+        return res.status(201).send({user,token})
 
     }catch(err){
         return res.status(500).send(err.message)
@@ -26,7 +26,6 @@ const signup=async(req,res)=>{
 }
 const signin=async(req,res)=>{
     try{
-        console.log("ss")
         let user=await User.findOne({username:req.body.username})
         console.log(user)
         if(!user){
@@ -38,7 +37,7 @@ const signin=async(req,res)=>{
             return res.status(400).send({message:"Either username or password incorrect"})
         }
         const token=newToken(user)
-        return res.send({user,token})
+        return res.status(200).send({user,token})
 
     }catch(err){
         return res.status(500)
