@@ -4,9 +4,9 @@ const connect=require('./config/db')
 
 require('dotenv').config()
 
-const port=process.env.Port || 5555;
 
-app.listen(port,async()=>{
+
+app.listen(process.env.PORT || 5000,async()=>{
     await connect()
-    console.log(`listening port ${port}`)
+    console.log('listening port 5000')
 })
