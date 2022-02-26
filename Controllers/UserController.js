@@ -41,7 +41,17 @@ router.get('/:id',async(req,res)=>{
 router.patch('/:id/follower',async(req,res)=>{
     try{
         const user=await User.findByIdAndUpdate(req.params.id,{
-            follower:req.body.follower,
+            $push:{follower:req.body.follower}
+        },{new:true}).populate('follower').populate('following').lean().exec()
+        return res.send(user)
+    }catch(err){
+        return res.status(500).send(err.message)
+    }
+})
+router.patch('/:id/unfollower',async(req,res)=>{
+    try{
+        const user=await User.findByIdAndUpdate(req.params.id,{
+            $pull:{follower:req.body.follower}
         },{new:true}).populate('follower').populate('following').lean().exec()
         return res.send(user)
     }catch(err){
@@ -52,7 +62,18 @@ router.patch('/:id/follower',async(req,res)=>{
 router.patch('/:id/following',async(req,res)=>{
     try{
         const user=await User.findByIdAndUpdate(req.params.id,{
-            following:req.body.following,
+            $push:{following:req.body.following}
+        },{new:true}).populate('follower').populate('following').lean().exec()
+        return res.send(user)
+    }catch(err){
+        return res.status(500).send(err.message)
+    }
+})
+
+router.patch('/:id/unfollowing',async(req,res)=>{
+    try{
+        const user=await User.findByIdAndUpdate(req.params.id,{
+            $pull:{following:req.body.following}
         },{new:true}).populate('follower').populate('following').lean().exec()
         return res.send(user)
     }catch(err){

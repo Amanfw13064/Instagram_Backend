@@ -27,7 +27,6 @@ const signup=async(req,res)=>{
 const signin=async(req,res)=>{
     try{
         let user=await User.findOne({username:req.body.username})
-        console.log(user)
         if(!user){
             return res.status(400).send({message:"Either username or password incorrect"})
         }

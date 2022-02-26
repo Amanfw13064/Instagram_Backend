@@ -14,8 +14,6 @@ router.post('',async(req,res)=>{
         title:req.body.title,
         picture:uploadRes.url,
         user_id:req.body.user_id,
-        likes:req.body.likes,
-        comment:req.body.comment,
        })
        return res.status(201).send(post)
     }catch(err){
@@ -25,7 +23,7 @@ router.post('',async(req,res)=>{
 
 router.get('',async(req,res)=>{
     try{
-          const post=await Post.find().populate("user_id").populate('likes').populate('comment').lean().exec()
+          const post=await Post.find().populate("user_id").sort('-createdAt').populate('postedBy').lean().exec()
           return res.status(200).send(post)
     }catch(err){
        return res.status(500).send(err.message)
@@ -35,20 +33,31 @@ router.get('',async(req,res)=>{
 router.patch('/:id/likes',async(req,res)=>{
     try{
         const post=await Post.findByIdAndUpdate(req.params.id,{
-            likes:req.body.likes
-        },{new:true}).populate('likes').populate('comment').lean().exec()
+            $push:{likes:req.body.likes}
+        },{new:true}).populate('postedBy').lean().exec()
         return res.status(200).send(post)
     }catch(err){
         return res.status(500).send(err.message)
     }
 })
 
+router.patch('/:id/unlikes',async(req,res)=>{
+    try{
+        const post=await Post.findByIdAndUpdate(req.params.id,{     
+            $pull:{likes:req.body.likes}
+        },{new:true}).populate('comment').lean().exec()
+        return res.status(200).send(post)
+    }catch(err){
+        return res.status(500).send(err.message)
+    }
+})
 router.patch('/:id/comment',async(req,res)=>{
     try{
         const post=await Post.findByIdAndUpdate(req.params.id,{
-            comment:req.body.comment,
-            postedBy:req.body.postedBy,
-        },{new:true}).populate('likes').populate('comment').lean().exec()
+            $push:{comment:req.body.comment,
+            postedBy:req.body.postedBy},
+            
+        },{new:true}).populate('postedBy').lean().exec()
         return res.status(200).send(post)
     }catch(err){
         return res.status(500).send(err.message)
